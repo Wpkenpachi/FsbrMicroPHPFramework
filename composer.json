@@ -8,7 +8,9 @@
             "email": "angelportinari17@gmail.com"
         }
     ],
-    "require": {},
+    "require": {
+        "Illuminate/database": "^5.4"
+    },
     "autoload": {
     	"psr-4": {
     		"core\\":"framework",

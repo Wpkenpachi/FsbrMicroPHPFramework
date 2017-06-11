@@ -1,6 +1,5 @@
 <?php 
 namespace core;
-
 class mvc extends init
 {
 
