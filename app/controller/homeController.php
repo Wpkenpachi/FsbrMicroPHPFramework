@@ -10,16 +10,19 @@ class homeController extends Controller
 	API Action(From API routes api/url) , will return data by this way... exit(json_encode())..
 	'api/' -> Or whatever you want to define.
 	*/
-	public function api($var = null){
-		if(isset($var) and !empty($var) and $var != null){
-			exit(json_encode($var));
+	public function api($vars = null){
+		if(isset($vars) and !empty($vars) and $vars != null){
+			exit(json_encode($vars));
 		}
 	}
 
 
 	//WEB Action (from web routes web/url), will return data by redering in views or right there...
 	// web/ or whatever you want to define...
-	public function web($var = null){
+	public function web($vars = null){
+
+		echo '<pre>';print_r($vars);echo '</pre>';
+		die();
 		$users = User::all();
 		echo '<ul>';
 		foreach ($users as $user) {

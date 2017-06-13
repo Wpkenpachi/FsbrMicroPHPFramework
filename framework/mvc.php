@@ -25,27 +25,29 @@ class mvc extends init
 		$foundRoute = 0;
 		foreach ($this->Routes as $route) {
 
-			$SUB_URLS_ROTA = explode('/', $route['url']);
+		$SUB_URLS_ROTA = explode('/', $route['url']);
 
-			if(count($SUB_URLS_ROTA) == count($SUB_URLS_BROWSER)){ // Verifica se a url no broser tem o mesmo tanto de sub urls, que a url da rota verificada no momento.
-				if($this->verifica_compatibilidade_total($SUB_URLS_ROTA, $SUB_URLS_BROWSER, count($SUB_URLS_ROTA), $regex1, $regex2)){
-					if($request_method == 'options'){
-						$foundRoute++;
-						break;
-					}else if($request_method == $route['verb']){
-						$this->exec($route['controller'] , $route['action'], $route['data'], $route['verb']);
-						$foundRoute++;
-					}	
-				}
-
+		if(count($SUB_URLS_ROTA) == count($SUB_URLS_BROWSER)){ // Verifica se a url no broser tem o mesmo tanto de sub urls, que a url da rota verificada no momento.
+			$variaveis_de_rota = $this->compatibilidade_total($SUB_URLS_ROTA,$SUB_URLS_BROWSER,count($SUB_URLS_ROTA),$regex1,$regex2);
+			if($variaveis_de_rota != false){
+				if($request_method == 'options'){
+					$foundRoute++;
+					break;
+				}else if($request_method == $route['verb'] && is_array($variaveis_de_rota)){
+					$this->exec($route['controller'] , $route['action'], $variaveis_de_rota, $route['verb']);
+					$foundRoute++;
+				}	
 			}
+
+		}
 		}
 		if($foundRoute == 0){
 			exit(http_response_code(404));
 		}
 	}
 
-	private function verifica_compatibilidade_total(Array $SUB_URLS_ROTA, Array $SUB_URLS_BROWSER, $count, $p, $p2){
+	private function compatibilidade_total(Array $SUB_URLS_ROTA, Array $SUB_URLS_BROWSER, $count, $p, $p2){
+		$array_vars = [];
 		for ($i=0; $i < $count; $i++) { // Percorre as sub-urls(correntes, passadas pelo foreach lá de cima)
 			// Verfica se essa suburl(corrente) da rota(corrente) trata-se de uam variavel e nao uma {var}
 			if(preg_match($p, $SUB_URLS_ROTA[$i])){
@@ -54,6 +56,9 @@ class mvc extends init
 					// Caso essa condição seja verdade imediatamente retorna false
 					// indicando que existe uma incompatibilidade na url
 					return false;
+				}else{
+					preg_match("/(\{){0}[a-z0-9\_]+(\}){0}/i", $SUB_URLS_ROTA[$i], $SUB_URLS_ROTA[$i]);
+					$array_vars[$SUB_URLS_ROTA[$i][0]] = $SUB_URLS_BROWSER[$i];
 				}
 			}
 			// Caso a suburl da rota não seja uma variavel,NEM seja igual a suburl(corrent) que ta no browser.
@@ -63,8 +68,7 @@ class mvc extends init
 				return false;
 			}
 		}
-
-		return true;// Caso não haja nenhuma incompatibilidade a função retorna true.
+		return $array_vars;// Caso não haja nenhuma incompatibilidade a função retorna true.
 	}
 
 	private function exec($ctrl, $action, $vars, $verb){
@@ -83,33 +87,43 @@ class mvc extends init
 	private function verbVerify($vars , $verb){
 			switch ($verb) {
 				case 'get':
-					for($i=0; $i < count($vars);$i++){
-						$return[$vars[$i]] = $_GET[$vars[$i]];
-					}
+						$return = $vars;
 					break;
 				case 'post':
 					$data = json_decode(file_get_contents('php://input'), true);
-					for($i =0; $i < count($vars);$i++){
-						$return[$vars[$i]] = $data[$vars[$i]];
+					if(isset($data) && !empty($data)){
+						$return['data'] = $data;
+					}
+					if(isset($vars) && !empty($vars)){
+						$return['gets'] = $vars;
 					}
 					break;
 				case 'put':
 					$data = json_decode(file_get_contents('php://input'), true);	
-					for($i =0; $i < count($vars);$i++){
-						$return[$vars[$i]] = $data[$vars[$i]];
+					if(isset($data) && !empty($data)){
+						$return['data'] = $data;
+					}
+					if(isset($vars) && !empty($vars)){
+						$return['gets'] = $vars;
 					}
 					break;
 				case 'patch':
 					$data = json_decode(file_get_contents('php://input'), true);
-					for($i =0; $i < count($vars);$i++){
-						$return[$vars[$i]] = $data[$vars[$i]];
+					if(isset($data) && !empty($data)){
+						$return['data'] = $data;
+					}
+					if(isset($vars) && !empty($vars)){
+						$return['gets'] = $vars;
 					}
 					break;
 
 				case 'delete':
 					$data = json_decode(file_get_contents('php://input'), true);
-					for($i =0; $i < count($vars);$i++){
-						$return[$vars[$i]] = $data[$vars[$i]];
+					if(isset($data) && !empty($data)){
+						$return['data'] = $data;
+					}
+					if(isset($vars) && !empty($vars)){
+						$return['gets'] = $vars;
 					}
 					break;
 			}

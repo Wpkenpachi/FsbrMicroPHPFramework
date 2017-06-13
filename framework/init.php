@@ -12,12 +12,19 @@ class init
 	private $Verb;
 
 	// FIRST FUNCTION FOR ADDING ROUTES
-	public function get($url , $controller, $var){
+	public function get($url , $controller){
 		$this->Verb = "get";
-		$this->Data = $var;
+		$this->Data = $this->resolve_get_vars($url);
 
 		$this->Url = $url;
 		$this->verifyCtrl($controller);
+	}
+
+	private function resolve_get_vars($url){
+		$regex1 = "/\{[a-z0-9\_]+\}/i";
+		$return_vars = null;
+		preg_match_all($regex1, $url, $return_vars);
+		return $return_vars[0];
 	}
 
 	public function post($url , $controller, $var){
