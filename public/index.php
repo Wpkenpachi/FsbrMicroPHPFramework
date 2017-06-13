@@ -2,46 +2,57 @@
 require __DIR__ . '/../vendor/autoload.php';
 require __DIR__ . '/../config/config.php';
 
-use Illuminate\Database\Capsule\Manager as Capsule;
-
-$capsule = new Capsule;
-$capsule->addConnection($dbconfig);
-// Make this Capsule instance available globally via static methods
-$capsule->setAsGlobal();
-// Setup the Eloquent ORM
-$capsule->bootEloquent();
-
 $app = new core\mvc;
 
-// This will return a object.
-$app->get('', function(){
-	$array = ['a' => b];
-
-	return (Object)$array;
-});
-
-
-$app->get('web/home/{id}', 'homeController@web');
-$app->get('web/home/profile/{id}/option/{option}', 'homeController@web');
-$app->get('categorias/{id}/produto/{id_produto}', 'homeController@web');
-$app->post('categorias/{id}/produto/{id_produto}', 'homeController@web');
-$app->patch('categorias/{id}/produto/{id_produto}', 'homeController@web');
-
 /*
-$app->post('web/home', 'homeController@web');
-$app->patch('web/home', 'homeController@web', ['patch']);
-$app->put('web/home', 'homeController@web', ['put']);
-$app->delete('web/home', 'homeController@web', ['delete']);
+	EasyMVC allow you to create WEB pages and API's.But in routes
+	this haven't any difference, you will do the same for both kind of applications.
+
+	Easy and simple example of a route that haven't a controller,
+	this route just execute something directly on the route function.
+	This will return a object.
+
+	---------------------------
+	$app->get('', function(){
+		$array = ['a' => b];
+		return (Object)$array;
+	});
+	---------------------------
+
+	Easy and simple example of a route that have a controller.
+	This will execute the function web() on homeController
+
+	---------------------------
+	$app->get('web/home/{id}', 'homeController@web');
+	---------------------------
+
+	You also have anothers function to define what kind of a route is this...
+	$app->post($url, $controller); Most used to add data.
+	$app->put($url, $controller);	Most used to update all fields from a especific data.
+	$app->delete($url, $controller); Most used to delete a especific data.
+
+_______Tchau
+______sE cuida
+
+_____boA noite
+____dorMe bem 
+_fica cOm deus
 */
 
-// This will return a string
-// API Routes
-$app->post('api/home', 'homeController@api', ['post']);
-$app->get('api/home', 'homeController@api', ['get']);
-$app->patch('api/home', 'homeController@api', ['patch']);
-$app->put('api/home', 'homeController@api', ['put']);
-$app->delete('api/home', 'homeController@api', ['delete']);
+$app->get('web/home/{id}/{idd}', 'homeController@web');
+$app->post('web/home/{id}/{idd}', 'homeController@web');
+$app->patch('web/home/{id}/{idd}', 'homeController@web');
 
+$app->get('', function(){
+		$array = ['a' => 'vazio'];
+		return $array;
+});
+
+$app->get('ha/{id}/p/{idd}', function(){
+		$array = ['a' => 'h'];
+		print_r(func_get_args());
+		//return (Object)$array;
+});
 
 
 $app->run();
