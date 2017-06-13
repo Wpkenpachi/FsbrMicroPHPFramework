@@ -21,8 +21,11 @@ class homeController extends Controller
 	// web/ or whatever you want to define...
 	public function web($vars = null){
 
-		echo '<pre>';print_r($vars);echo '</pre>';
+		//echo '<pre>';print_r($vars);echo '</pre>';
+		$this->toRender('index', ['vars' => $vars]);
+
 		die();
+		
 		$users = User::all();
 		echo '<ul>';
 		foreach ($users as $user) {

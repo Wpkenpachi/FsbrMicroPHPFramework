@@ -1,6 +1,8 @@
 <?php
 namespace app\controller;
 
-class Controller
+use core\init;
+
+class Controller extends init
 {
 }
