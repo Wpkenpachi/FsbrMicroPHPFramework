@@ -19,21 +19,13 @@ class homeController extends Controller
 
 	//WEB Action (from web routes web/url), will return data by redering in views or right there...
 	// web/ or whatever you want to define...
-	public function web($vars = null){
+	public function index($vars = null){
+		$this->toRender('admin/login.php');
+	}
 
-		//echo '<pre>';print_r($vars);echo '</pre>';
-		$this->toRender('index', ['vars' => $vars]);
-
-		die();
-		
-		$users = User::all();
-		echo '<ul>';
-		foreach ($users as $user) {
-			echo '<li>Nome: '.$user->nome.'<ul><li>';
-			echo 'Email: '.$user->email.'</li></ul></li>';
-
-		}
-		echo '</ul>';
+	public function dashboard($vars = null){
+		$users = User::all()->first();
+		$this->toRender('admin/dashboard.php', ['users' => $users]);
 	}
 	
 }

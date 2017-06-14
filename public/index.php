@@ -39,20 +39,10 @@ ____dorMe bem
 _fica cOm deus
 */
 
-$app->get('web/home/{id}/{idd}', 'homeController@web');
-$app->post('web/home/{id}/{idd}', 'homeController@web');
-$app->patch('web/home/{id}/{idd}', 'homeController@web');
+$app->get('home', 'dashboardController@index');
 
-$app->get('', function(){
-		$array = ['a' => 'vazio'];
-		return $array;
-});
+$app->patch('home', 'dashboardController@update');
 
-$app->get('ha/{id}/p/{idd}', function(){
-		$array = ['a' => 'h'];
-		print_r(func_get_args());
-		//return (Object)$array;
-});
 
 
 $app->run();
