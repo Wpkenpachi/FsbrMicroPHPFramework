@@ -40,18 +40,16 @@ _fica cOm deus
 */
 
 // Rota padrão '/'
-$app->get('', 'homeController@index');
 
-$app->get('dashboard', 'dashboardController@index');
-// get('get/home', '$dashboardController->', 'index()')
+//$app->get('', 'homeController@index');
+$app->get('', function(){
+	$style = 'text-align: center;';
+	echo "<h1 style=\"{$style}\"> Meu Titulo </h1>";
+});
+
+$app->get('home/{id}', 'dashboardController@show');
 
 
-$app->get('dashboard/{nome}/{sobrenome}', 'dashboardController@show');
-
-$app->post('dashboard/{nome}/{sobrenome}', 'dashboardController@show');
-
-// $controller = new dasboardController
-// $controller->show({id});
 
 
 
