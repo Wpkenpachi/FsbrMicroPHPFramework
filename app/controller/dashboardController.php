@@ -1,42 +1,37 @@
 <?php 
 
 namespace app\controller;
+use core\Controller;
 
 use app\models\User;
+
+
 
 class dashboardController extends Controller
 {
 	
 	public function index(){
-		$data = new User;
-		$users = $data::all()->first();
-		echo "Está sendo executado";
-		return $this->toRender('index.php', ['user' => $users]);
+		$users = User::all()->first();
+		$this->toRender('admin/dashboard.php', ['users' => $users]);
 	}
 
-	protected function helper($dado){
-		echo "<pre>";
-		print_r($dado);
-		echo "</pre>";
+
+	public function show(){
+		//$nome = $this->getParam('nome');
+		//$sobrenome = $this->getParam('sobrenome');
+		//$idade = $this->getBodyAttr('idade');
+		$body = $this->getBody();
+		print_r($body);
+		die();
+		//print_r($this->getParams());
+		echo "
+		Meu completo nome é : {$nome} {$sobrenome},
+		E eu tenho {$idade} anos de idade.
+		";
+
 	}
 
-	public function update(){
-		// Obtendo valores das variáveis da url
-		$id = func_get_arg(0)['data']['id'];
-		$nome = func_get_arg(0)['data']['nome'];
-		
-		// Criando instância do model que referencia a tabela 'users'
-		// Atualizando um dado específico da tabela users
-		$data = new User;
-		$users = $data::find($id);
-		$users->update(['nome' => $nome]);
 
-
-		// renderizar a view, e passar as variáveis
-		// que essa view, terá acesso.
-		$this->toRender('index.php', ['user' => $users]);
-		
-	}
 
 
 }
