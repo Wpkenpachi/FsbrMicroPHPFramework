@@ -39,9 +39,19 @@ ____dorMe bem
 _fica cOm deus
 */
 
-$app->get('home', 'dashboardController@index');
+// Rota padrão '/'
+$app->get('', 'homeController@index');
 
-$app->patch('home', 'dashboardController@update');
+$app->get('dashboard', 'dashboardController@index');
+// get('get/home', '$dashboardController->', 'index()')
+
+
+$app->get('dashboard/{nome}/{sobrenome}', 'dashboardController@show');
+
+$app->post('dashboard/{nome}/{sobrenome}', 'dashboardController@show');
+
+// $controller = new dasboardController
+// $controller->show({id});
 
 
 
