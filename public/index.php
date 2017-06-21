@@ -41,13 +41,16 @@ _fica cOm deus
 
 // Rota padrão '/'
 
-//$app->get('', 'homeController@index');
 $app->get('', function(){
 	$style = 'text-align: center;';
-	echo "<h1 style=\"{$style}\"> Meu Titulo </h1>";
+	echo "<h1 style=\"{$style}\"> Bem Vindo ao FSBR MVC </h1>";
 });
 
-$app->get('home/{id}', 'dashboardController@show');
+//$app->get('home', 'MeuController@mostra');
+
+$app->get('profile/{id}', 'homeController@home');
+
+
 
 
 

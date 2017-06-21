@@ -11,7 +11,7 @@ class dashboardController extends Controller
 {
 	
 	public function index(){
-		$users = User::all()->first();
+		//$users = User::all()->first();
 		$this->toRender('admin/dashboard.php', ['users' => $users]);
 	}
 
@@ -20,18 +20,21 @@ class dashboardController extends Controller
 		//$nome = $this->getParam('nome');
 		//$sobrenome = $this->getParam('sobrenome');
 		//$idade = $this->getBodyAttr('idade');
-		$body = $this->getBody();
-		print_r($body);
-		die();
-		//print_r($this->getParams());
-		echo "
-		Meu completo nome é : {$nome} {$sobrenome},
-		E eu tenho {$idade} anos de idade.
-		";
+		//$body = $this->getBody();
+
+		$id = $this->getParam('id');
+
+		$db = new \PDO('mysql:host=localhost;dbname=mvc', 'root', 'mysql');
+		$query = $db->prepare("SELECT * FROM users WHERE id = $id");
+		$query->execute();
+		$data = $query->fetch();
+
+		$this->toRender('index.php', ['dados' => $data]);
 
 	}
 
-
-
+	public function teste(){
+		$this->toRender('index2.php',['nome' => 'wesley', 'sobrenome' => 'Paulo','_idade' => 21, 'esportes' => ['futebol', 'voley']]);
+	}
 
 }

@@ -8,5 +8,4 @@ class User extends Model
 	protected $table = 'users';
 	protected $fillable = ['nome'];
 	
-	
 }

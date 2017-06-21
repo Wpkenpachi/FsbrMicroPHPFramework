@@ -2,6 +2,7 @@
 namespace core;
 
 use core\View;
+use core\phprender;
 use app\controller\Request;
 
 class init
@@ -13,6 +14,8 @@ class init
 	private $Action;
 	private $Data;
 	private $Verb;
+
+	private $wprender;
 
 	//==============================================================//
 	//																//
@@ -27,15 +30,6 @@ class init
 		$this->Url = $url;
 		$this->verifyCtrl($controller);
 	}
-
-	/* FUNCTION TO RESOLVE REQUEST VARS
-	private function resolve_request_vars($url){
-		$regex1 = "/\{[a-z0-9\_]+\}/i";
-		$return_vars = null;
-		if(preg_match_all($regex1, $url, $return_vars))
-			return $return_vars[0];
-	}
-	*/
 
 	public function post($url , $controller, $var = null){
 		$this->Verb = "post";
@@ -111,12 +105,17 @@ class init
 	//																//
 	//==============================================================//
 
-	public function toRender($path = null , array $dataBind = null, $template = null){
+	public function toRender($path = null , array $dataBind = null, $render_engine = null){
 		extract($dataBind);
-		if($template){
-			include $this->render_template($path);
-		}else{
+		if($render_engine == null){
 			include $this->render_view($path);
+		}else{
+			$html = file_get_contents($this->render_view($path));
+			$this->wprender = new phprender($html);
+			$fp = fopen(__DIR__."/../app/views/cache/render_engine_temp.php", "w");
+			fwrite($fp, $this->wprender->getHtml());
+			fclose($fp);
+			include(__DIR__."/../app/views/cache/render_engine_temp.php");
 		}
 		
 	}

@@ -1,28 +1,22 @@
 <?php
+
 namespace app\controller;
 use core\Controller;
 
-use app\models\User;
+class homeController extends Controller{
 
-class homeController extends Controller
-{
+    public function home(){
+        $profile = [
+            'nome' => 'Wesley',
+            'sobrenome' => 'Paulo',
+            'idade' => 18,
+            'email' => 'wesley@email.com',
+            'jogos' => ['Dragon Ball Z Budokai Tenkaichi 3', 'League of Legends', 'Battlefield 4'],
+            'id' => $this->getParam('id')
+        ];
 
-	/*
-	API Action(From API routes api/url) , will return data by this way... exit(json_encode())..
-	'api/' -> Or whatever you want to define.
-	
-	public function api($vars = null){
-		if(isset($vars) and !empty($vars) and $vars != null){
-			exit(json_encode($vars));
-		}
-	}
+        //$this->toRender('teste.php', ['user' => $profile]);
+        $this->toRender('teste2.php', ['user' => $profile], true);
+    }
 
-	*/
-
-	//WEB Action (from web routes web/url), will return data by redering in views or right there...
-	// web/ or whatever you want to define...
-	public function index(){
-		$this->toRender('admin/login.php');
-	}
-	
 }
