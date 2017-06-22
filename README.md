@@ -1,35 +1,32 @@
-Primeiro passo:
-    Arquivo index na pasta public.
-    - require autoload do composer
-    - require config.php (db configs)
-/*
-================================ ROTAS ================================ 
-- get
-- post 
-- patch
-- put 
-- delete
-#1
+## ROTAS 
+* get
+* post 
+* patch
+* put 
+* delete
 
+###### Route type 01
+``` php
 $app->get('profile/{id}', function(){
     // echo 'Hello World';
     return 'Olá Mundo!';
 });
+```
 
-#2
+###### Route type 02
 Essa rota aqui, diferentemente da outra acima, especifica um 
 controller(Class) e uma action (Function) pra lidar com os dados,
 exibílos de lá mesmo ou chamar 
 
+```php
 $app->get('profile/{id}', 'MeuController@minha_Action');
+```
 
-*/
+## CONTROLLERS 
+###### Criando Controller
+**ps**: Nome do Controller, tem que ser o mesmo do arquivo, especificamente
 
-==== CONTROLLERS ====
-#1
-Criando Controller
-ps: Nome do Controller, tem que ser o mesmo do arquivo, especificamente
--------------------------
+```php
 <?php 
 namespace app\controller;// Definindo o namespace do controller
 use core\Controller;// Declarando o Controller principal, pra poder extender
@@ -39,11 +36,10 @@ class MeuController extends Controller{
 
     }
 }
--------------------------
-#2
-Obtendo dados enviados via url e via body, da rota
-criada.
-//
+```
+
+###### Obtendo dados enviados via url e via body, da rota criada.
+```php
 <?php //arquivo> public/index.php
 {..}
 $app = new core\mvc;
@@ -53,7 +49,8 @@ $app->get('produto/{id}', 'MeuController@mostra');
 // desse produto via body da requisição post
 $app->post('produto', 'MeuController@add');
 $app->run();// função que roda o mvc
-
+```
+```php
 <?php //arquivo> app/controller/MeuController.php
 namespace app\controller;
 use core\Controller;
@@ -87,15 +84,16 @@ class MeuController extends Controller{
     }
 
 }
+```
 
-==== RENDER ====
-/*
-Como chamar um html pra ser renderizado, e passar variáveis pra ele
-*/
+## RENDER 
 
+###### Como chamar um html pra ser renderizado, e passar variáveis pra ele
+```php
 // rota:
 $app->get('produto/{id}', 'MeuController@mostra');
-
+```
+```php
 //arquivo> app/controller/MeuController.php
 <?php
 namespace app\controller;
@@ -123,8 +121,9 @@ class MeuController extends Controller{
     }
 
 }
-
-//arquivo php/view> app/views/teste.php
+```
+```html
+<!--- arquivo php/view> app/views/teste.php  -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -136,8 +135,10 @@ class MeuController extends Controller{
     </ul>
 </body>
 </html>
+```
 
-==== RENDER ENGINE ====
+## RENDER ENGINE ====
+```php
 /*
 Existe ainda uma outra forma de você desenvolver suas páginas html
 e de forma mais 'rápida' e 'agradável'. Que seria atravez da render engine 
@@ -171,7 +172,9 @@ class MeuController extends Controller{
     }
 
 }
-//arquivo php/view
+```
+```html
+<!-- arquivo php/view -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -187,3 +190,4 @@ class MeuController extends Controller{
     @endif;
 </body>
 </html>
+```
