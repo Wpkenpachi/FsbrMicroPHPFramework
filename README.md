@@ -7,6 +7,7 @@
 
 ###### Route type 01
 ``` php
+// arquivo> public/index.php
 $app->get('profile/{id}', function(){
     // echo 'Hello World';
     return 'Olá Mundo!';
