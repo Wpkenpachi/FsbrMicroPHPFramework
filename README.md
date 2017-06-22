@@ -137,7 +137,7 @@ class MeuController extends Controller{
 </html>
 ```
 
-## RENDER ENGINE ====
+## RENDER ENGINE
 ```php
 /*
 Existe ainda uma outra forma de você desenvolver suas páginas html
