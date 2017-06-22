@@ -16,7 +16,7 @@ class homeController extends Controller{
         ];
 
         //$this->toRender('teste.php', ['user' => $profile]);
-        $this->toRender('teste2.php', ['user' => $profile], true);
+        $this->toRender('teste3.php', ['user' => $profile], true);
     }
 
 }

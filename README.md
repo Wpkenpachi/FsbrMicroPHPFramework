@@ -1,4 +1,3 @@
-# wpmvc
 Primeiro passo:
     Arquivo index na pasta public.
     - require autoload do composer
@@ -26,7 +25,7 @@ $app->get('profile/{id}', 'MeuController@minha_Action');
 
 */
 
-============================= CONTROLLERS ============================= 
+==== CONTROLLERS ====
 #1
 Criando Controller
 ps: Nome do Controller, tem que ser o mesmo do arquivo, especificamente
@@ -89,7 +88,7 @@ class MeuController extends Controller{
 
 }
 
-============================= RENDER ============================= 
+==== RENDER ====
 /*
 Como chamar um html pra ser renderizado, e passar variáveis pra ele
 */
@@ -138,7 +137,7 @@ class MeuController extends Controller{
 </body>
 </html>
 
-============================= RENDER ENGINE ============================= 
+==== RENDER ENGINE ====
 /*
 Existe ainda uma outra forma de você desenvolver suas páginas html
 e de forma mais 'rápida' e 'agradável'. Que seria atravez da render engine 
