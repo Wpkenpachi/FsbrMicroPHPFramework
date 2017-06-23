@@ -14,3 +14,4 @@
 <script src="/public/plugins/iCheck/icheck.min.js"></script>
 </body>
 </html>
+

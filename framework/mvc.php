@@ -7,108 +7,131 @@ class mvc extends init
 
 	protected static $Request;
 
-	public function run(){
-		// Expressão regular pra identificar a ocorrência de {id}..{id_user} e etc
-		$regex1 = "/\{[a-z0-9\_]+\}/i";
-		// Expressão regular que identifica numeros ou letras que estejam entre parenteses, especificamente nesse formato -> /2/ ou /a/ .
-		// claro que podendo ser qualquer numero de 0-9, e qualquer letra de a-z.
-		$regex2 = "/(\/){1}[a-z0-9]+(\/){1}/";
+	protected $Request_Method;
+    protected $Url_Current;
+	protected $Url_Vars;
 
-		// Will catch current URL
-		$currentUrl = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-		$currentUrl = substr($currentUrl, 1);
+    protected $Find_Var_Regex = "/\{[a-z0-9\_]+\}/i";
 
-		// Obtendo e tratando método da requisição.
-		$request_method = strtolower($_SERVER['REQUEST_METHOD']);
-			
-		$foundRoute = 0;
+    protected $Requested_Url = null;
+    protected $Route_Compatible = null;
 
-		// Verifying if the last char of browser url is a '/'
-		if(substr($currentUrl, -1) == '/'){
-			$currentUrl = substr($currentUrl, 0, -1);
-		}
+    public function run(){
+        $this->Url_Current = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);// Pegando URL NO BROWSER
+        $this->Url_Current = substr($this->Url_Current, 1); // ELIMINANDO BARRA inicial '/'
 
-		if(count(explode('/', $currentUrl)) < 2){
-			//echo "Primeiro <br>";
-			$variaveis_de_rota = $this->compatibilidade_total(null,null,null,$regex1,$regex2);
-			foreach ($this->Routes as $route) {
-				if($route['url'] == $currentUrl){
-					//echo "url similar <br>";
-					$foundRoute = $this->compare_Url($currentUrl, $variaveis_de_rota, $request_method);
-					break;
-				}
-			}
-		}else{
-			//echo "Segundo <br>";
-			// Quebrando url do browser em sub_urls
-			$SUB_URLS_BROWSER = explode('/', $currentUrl);
-			foreach ($this->Routes as $route) {
-			$SUB_URLS_ROTA = explode('/', $route['url']);
-				if(count($SUB_URLS_ROTA) == count($SUB_URLS_BROWSER)){ // Verifica se a url no broser tem o mesmo tanto de sub urls, que a url da rota verificada no momento.
-					$variaveis_de_rota = $this->compatibilidade_total($SUB_URLS_ROTA,$SUB_URLS_BROWSER,count($SUB_URLS_ROTA),$regex1,$regex2);
-					if($variaveis_de_rota != false){
-						if($request_method == 'options'){
-							$foundRoute++;
-							break;
-						}else if($request_method == $route['verb'] && is_array($variaveis_de_rota)){
-							$this->exec($route['controller'] , $route['action'], $variaveis_de_rota, $route['verb']);
-							$foundRoute++;
-						}	
-					}
-				}
-			}	
-		}
-		
-		
-		if($foundRoute == 0){
-			exit(http_response_code(404));
-		}
+        // Obtendo e tratando método da requisição.
+		$this->Request_Method = strtolower($_SERVER['REQUEST_METHOD']);
+ 
+        // Quebra url atual
+        $this->Url_Current = $this->treat_url_slashes($this->Url_Current);
+        //echo $this->Url_Current;
+        $this->route_string_comparison();
+        
+    }
+
+    // Quebra Url, e trata possíveis espaços(keys/chaves) em branco gerados pelo explode
+    private function treat_url_slashes(&$url_tree_array){
+        $array = explode('/', $url_tree_array);
+        $branchs = [];
+        array_walk($array,function($branch) use (&$branchs){
+            if(!empty($branch) && isset($branch)){
+                $branchs[] = $branch;
+            }
+        });
+
+        return implode('/', $branchs);
+    }
+
+    private function route_string_comparison(){
+        // Verify if the url plane string is recognized
+        // Simple Comparison
+        foreach($this->Routes as $route){
+            if($route['url'] == $this->Url_Current){
+                $this->Route_Compatible = $route;
+                break;
+            }
+        }
+
+        if($this->Route_Compatible){
+            $this->url_found($this->Route_Compatible);
+        }else{
+            $this->route_tree_keys_comparison();
+        }
+    }
+
+    public function route_tree_keys_comparison(){
+    // Convert the url plane string in an tree keys array
+    // Detailed comparison
+    $url_tree_keys = explode('/',$this->Url_Current); // broken the current url
+
+        foreach($this->Routes as $route):
+            $route_url_keys = explode('/', $route['url']);// broken route
+            preg_match_all($this->Find_Var_Regex, $route['url'], $how_much_vars);// quantidade de variáveis
+            $difereces = array_diff_assoc($url_tree_keys, $route_url_keys); // diferença entre route_url e current_url
+            
+            // Primeira subcomparação: Verifica igualdade na quantidade de branches
+            if(count($url_tree_keys) == count($route_url_keys)){
+                //echo 'Primeira subcomparação <br>';
+                // Segunda subcomparação: Verifica igualdade branch à branch
+                if( count($difereces) == count($how_much_vars[0]) ){
+                    //echo 'Segunda subcomparação <br>';
+                    // Verifica se a branch atual é variável
+                    if($this->verify_regex($how_much_vars[0])){
+                        //echo 'branch atual é variável <br>';
+						$this->get_url_vars($how_much_vars[0], $difereces);
+                        $this->Route_Compatible = $route;
+                        break;
+                    }else{
+                        //echo 'Debug: Não é uma variável <br>';
+                        $this->Route_Compatible = null;
+                        continue;
+                    }
+                }else{
+                    //echo 'Debug: Erro na Segunda subcomparação <br>';
+                    $this->Route_Compatible = null;
+                    continue;
+                }
+            }else{
+                //echo 'Debug: Erro na Primeira subcomparação <br>';
+                $this->Route_Compatible = null;
+                continue;
+            }
+        endforeach;
+
+        if($this->Route_Compatible){
+            $this->url_found($this->Route_Compatible);
+        }else{
+            $this->url_not_found();
+        }
+    }
+
+    private function verify_regex($branchs){
+        $return = null;
+        foreach($branchs as $branch){
+            if(preg_match($this->Find_Var_Regex, $branch)){
+                $return = true;
+            }else{
+                $return = false;
+            }
+        }
+        return $return;
+    }
+
+	private function get_url_vars($keys, $values){
+		$keys = preg_replace('/[\{\}]+/', '', $keys);
+		$url_vars = array_combine($keys, $values);
+		$this->Url_Vars = $url_vars;
 	}
 
+    private function url_not_found(){
+        //echo 'nada encontrado';
+        exit(http_response_code(404));
+    }
 
-	// COMPARAÇÃO DE URL BROWSER e URL ROTA COMUM
-	private function compare_Url($currentUrl, $variaveis_de_rota = null, $request_method){
-			//echo "comparação total de url <br>";
-		foreach ($this->Routes as $route) {
-				if($route['url'] == $currentUrl && $request_method == $route['verb']){
-				//echo "encontrada url similar e com o mesmo metodo <br>";
-				$this->exec($route['controller'] , $route['action'], $variaveis_de_rota, $route['verb']);
-				return 1;
-				break;
-				}
-			}
-
-			return 0;
-	}
-
-
-
-
-
-	private function compatibilidade_total($SUB_URLS_ROTA = null, $SUB_URLS_BROWSER = null, $count = null, $p, $p2){
-		$array_vars = [];
-		for ($i=0; $i < $count; $i++) { // Percorre as sub-urls(correntes, passadas pelo foreach lá de cima)
-			// Verfica se essa suburl(corrente) da rota(corrente) trata-se de uam variavel e nao uma {var}
-			if(preg_match($p, $SUB_URLS_ROTA[$i])){
-			// Verifica se a suburl(corrente) do browser, NÃO bate cm a expressão regular.
-				if(!preg_match($p2, $SUB_URLS_BROWSER[$i]) == false){
-					// Caso essa condição seja verdade imediatamente retorna false
-					// indicando que existe uma incompatibilidade na url
-					return false;
-				}else{
-					preg_match("/(\{){0}[a-z0-9\_]+(\}){0}/i", $SUB_URLS_ROTA[$i], $SUB_URLS_ROTA[$i]);
-					$array_vars[$SUB_URLS_ROTA[$i][0]] = $SUB_URLS_BROWSER[$i];
-				}
-			}
-			// Caso a suburl da rota não seja uma variavel,NEM seja igual a suburl(corrent) que ta no browser.
-			else if($SUB_URLS_ROTA[$i] != $SUB_URLS_BROWSER[$i]){ 
-				// Caso essa condição seja verdade imediatamente retorna false
-				// indicando que existe uma incompatibilidade na url
-				return false;
-			}
-		}
-		return $array_vars;// Caso não haja nenhuma incompatibilidade a função retorna true.
-	}
+    private function url_found($route){
+		$this->exec($route['controller'], $route['action'], $this->Url_Vars, $route['verb']);
+    }
 
 
 
@@ -126,63 +149,109 @@ class mvc extends init
 		}
 	}
 
-
-
+	
 	// Verifica o tipo de requisição, pra obter o conteúdo da forma correta;
 	// O retorno disso, é passado como argumento, pra função do controller;
 	private function verbVerify($vars , $verb){
-			$headers = getallheaders();
-			$content_type = $headers['Content-Type'];
 			switch ($verb) {
 				case 'get':
-						$return['gets'] = $vars;
+						$return = $this->return_get($vars);
 					break;
 				case 'post':
-					//
-					if($content_type != 'application/x-www-form-urlencoded'){
-						$data = json_decode(file_get_contents('php://input'), true);
-					}else{
-						$data = $this->resolve_url(file_get_contents('php://input'));
-					}
-					if(isset($data) && !empty($data)){
-						$return['data'] = $data;
-					}
-					if(isset($vars) && !empty($vars)){
-						$return['gets'] = $vars;
-					}
+						$return = $this->return_post($vars);
 					break;
 				case 'put':
-					$data = json_decode(file_get_contents('php://input'), true);	
-					if(isset($data) && !empty($data)){
-						$return['data'] = $data;
-					}
-					if(isset($vars) && !empty($vars)){
-						$return['gets'] = $vars;
-					}
+						$return = $this->return_put($vars);
 					break;
 				case 'patch':
-					$data = json_decode(file_get_contents('php://input'), true);
-					if(isset($data) && !empty($data)){
-						$return['data'] = $data;
-					}
-					if(isset($vars) && !empty($vars)){
-						$return['gets'] = $vars;
-					}
+						$return = $this->return_patch($vars);
 					break;
 				case 'delete':
-					$data = json_decode(file_get_contents('php://input'), true);
-					if(isset($data) && !empty($data)){
-						$return['data'] = $data;
-					}
-					if(isset($vars) && !empty($vars)){
-						$return['gets'] = $vars;
-					}
+						$return = $this->return_delete($vars);
 					break;
 			}
 			return $return;
 	}
 
-	function resolve_url($url_vars){
+	// Retorno da requisição GET
+	private function return_get($vars){
+		return $return['gets'] = $vars;
+	}
+	// Retorno da requisição POST
+	private function return_post($vars){
+
+		$data = $this->validate_content_type();
+		
+		if(isset($data) && !empty($data)){
+			$return['data'] = $data;
+		}
+		if(isset($vars) && !empty($vars)){
+			$return['gets'] = $vars;
+		}
+		
+		return $return;
+	}
+
+	// Retorno da requisição PATCH
+	private function return_patch(){
+		$data = $this->validate_content_type();
+		
+		if(isset($data) && !empty($data)){
+			$return['data'] = $data;
+		}
+		if(isset($vars) && !empty($vars)){
+			$return['gets'] = $vars;
+		}
+		
+		return $return;
+	}
+	// Retorno da requisição PUT
+	private function return_put(){
+		$data = $this->validate_content_type();
+		
+		if(isset($data) && !empty($data)){
+			$return['data'] = $data;
+		}
+		if(isset($vars) && !empty($vars)){
+			$return['gets'] = $vars;
+		}
+		
+		return $return;
+	}
+	// Retorno da requisição DELETE
+	private function return_delete(){
+		$data = $this->validate_content_type();
+		
+		if(isset($data) && !empty($data)){
+			$return['data'] = $data;
+		}
+		if(isset($vars) && !empty($vars)){
+			$return['gets'] = $vars;
+		}
+		
+		return $return;
+	}
+
+
+	// validate content type and return the content as array
+	private function validate_content_type(){
+		
+		$headers = getallheaders(); // Pegando todos os headers da requisição
+
+		switch($headers['Content-Type']){
+			case 'application/x-www-form-urlencoded':
+				$return_content = $this->resolve_url_data(file_get_contents('php://input'));
+			break;
+
+			case 'application/json':
+				$return_content = json_decode(file_get_contents('php://input'), true);
+			break;
+		}
+		return $return_content;
+	}
+
+	// Resolve url data of x-www-form-urlencoded
+	function resolve_url_data($url_vars){
 		
 		$params = urldecode($url_vars);
 		$params = explode('&', $params);

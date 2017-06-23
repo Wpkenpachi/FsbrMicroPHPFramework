@@ -3,14 +3,13 @@ namespace core;
 
 class Controller extends mvc
 {
-	public $Attrs;
 
 	protected function getParam($target){
-		return self::$Request["gets"][$target];
+		return self::$Request[$target];
 	} 
 
 	protected function getParams(){
-		return self::$Request["gets"];
+		return self::$Request;
 	} 
 
 	protected function getBody(){
