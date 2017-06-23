@@ -131,12 +131,19 @@ class mvc extends init
 	// Verifica o tipo de requisição, pra obter o conteúdo da forma correta;
 	// O retorno disso, é passado como argumento, pra função do controller;
 	private function verbVerify($vars , $verb){
+			$headers = getallheaders();
+			$content_type = $headers['Content-Type'];
 			switch ($verb) {
 				case 'get':
 						$return['gets'] = $vars;
 					break;
 				case 'post':
-					$data = json_decode(file_get_contents('php://input'), true);
+					//
+					if($content_type != 'application/x-www-form-urlencoded'){
+						$data = json_decode(file_get_contents('php://input'), true);
+					}else{
+						$data = $this->resolve_url(file_get_contents('php://input'));
+					}
 					if(isset($data) && !empty($data)){
 						$return['data'] = $data;
 					}
@@ -173,6 +180,20 @@ class mvc extends init
 					break;
 			}
 			return $return;
+	}
+
+	function resolve_url($url_vars){
+		
+		$params = urldecode($url_vars);
+		$params = explode('&', $params);
+		$vars = [];
+
+		foreach($params as $param){
+			$helper = explode('=' , $param);
+			$vars[$helper[0]] = $helper[1];
+		}
+
+		return $vars;
 	}
 
 	// Parametro que seta o Atributo Request (init), com os parametros

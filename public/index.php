@@ -47,9 +47,10 @@ $app->get('', function(){
 });
 
 //$app->get('home', 'MeuController@mostra');
+//$app->get('profile/{id}', 'homeController@home');
 
-$app->get('profile/{id}', 'homeController@home');
-
+$app->get('login', 'loginController@login');
+$app->post('validate', 'loginController@validate');
 
 
 
