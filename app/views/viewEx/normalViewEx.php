@@ -1,4 +1,4 @@
-<?php include $this->render_template('header.php'); ?>
+<?php/* include $this->render_template('header.php'); ?>
 <div class="container">
 	<table class="table table-striped">
 		<caption> Dados do meu Perfil </caption>
@@ -19,3 +19,5 @@
 	</table>
 </div>
 <?php include $this->render_template('footer.php') ?>
+*/
+?>

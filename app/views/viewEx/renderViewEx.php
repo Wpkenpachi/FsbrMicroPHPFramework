@@ -1,3 +1,5 @@
+<?php
+/*
 :> include $this->render_template('header.php'); <:
 <div>
     <header>
@@ -24,3 +26,5 @@
     </div>
 </div>
 :> include $this->render_template('footer.php') <:
+*/
+?>
