@@ -43,8 +43,7 @@ $app->get('profile/{id}', function(){
 
 ### Rota completa
 Essa rota aqui, diferentemente da outra acima, especifica um 
-controller(Class) e uma action (Function) pra lidar com os dados,
-exibílos de lá mesmo ou chamar 
+controller(Class) e uma action (Function) pra lidar com os dados.
 
 ```php
 $app->get('profile/{id}', 'MeuController@minha_Action');
