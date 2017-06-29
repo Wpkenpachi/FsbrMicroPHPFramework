@@ -1,8 +1,8 @@
 <?php 
 namespace core;
 
-// To use a native the simple native ORM 'WPDatabase'
-use core\WPDatabase;
+// To use a native the simple native ORM 'FSBRDatabase'
+use core\FSBRDatabase;
 
 
 class mvc extends init

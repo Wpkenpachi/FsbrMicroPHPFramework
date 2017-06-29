@@ -211,7 +211,7 @@ class FSBRDatabase {
         $args = func_get_args();
 
         foreach($args as $arg){
-            if(!is_array($args)){
+            if(!is_array($arg)){
                 throw new Exception('Args Error: '.__FUNCTION__.'() Expecting type Array for your parameters');
             }elseif(count($arg) > 3 || count($arg) < 2){
             throw new Exception('Args Error: '.__FUNCTION__."() Expecting an array with 3 values where you put {$arg}");
