@@ -4,7 +4,7 @@ namespace core;
 
 include 'Config.php';
 
-class WPDatabase {
+class FSBRDatabase {
     protected static $Conn;
     private $Operation;
 

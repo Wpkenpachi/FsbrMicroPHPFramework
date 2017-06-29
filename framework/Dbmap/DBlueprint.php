@@ -109,12 +109,17 @@ class DBlueprint {
         return $this;
     }
 
+    // MODIFICADORES
+    public function unique(){
+        $this->QString[$this->Name] .= ' UNIQUE ';
+        return $this;
+    }
+
     public function notNull(){
         $this->QString[$this->Name] .= ' NOT NULL ';
         return $this;
     }
 
-    // MODIFICADORES
     public function increments(){
         $this->QString[$this->Name] .= ' NOT NULL AUTO_INCREMENT ';
         return $this;

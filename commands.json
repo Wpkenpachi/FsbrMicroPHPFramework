@@ -1,3 +1,3 @@
 {
-    "commands" : ["make", "server", "lists", "manage", "new", "up_tables","refresh_tables","delete_tables","update"]
+    "commands" : ["make", "server", "lists", "manage", "new", "up_tables","refresh_tables","delete_tables"]
 }

@@ -21,7 +21,7 @@ class mvc extends init
     protected $Route_Compatible = null;
 
 	function __construct(){
-		$this->Database = new WPDatabase;
+		$this->Database = new FSBRDatabase;
 	}
 
     public function run(){
