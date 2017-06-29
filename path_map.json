@@ -1,0 +1,9 @@
+{
+    "controller" : "/../app//controller//",
+    "template": "/../app//view//templates//",
+    "model" : "/../app//model//",
+    "view" : "/../app//view//",
+    "dbmap" : "/../app//dbmap//",
+    "mods": "/mods//",
+    "typesList": "/types//"
+}

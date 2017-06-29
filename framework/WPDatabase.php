@@ -2,7 +2,7 @@
 
 namespace core;
 
-include __DIR__ . '../config.php';
+include 'Config.php';
 
 class WPDatabase {
     protected static $Conn;
@@ -24,8 +24,21 @@ class WPDatabase {
     private $Query;
 
     function __construct(){
-        self::$Conn = new \PDO($dbconfig['driver'].":host=".$dbconfig['host'].";dbname=".$dbconfig['dbname'].";", $dbconfig['username'], $dbconfig['password']);
+        self::$Conn = new \PDO(DRIVER.":host=".HOST.";dbname=".DBNAME.";", USER, PASS);
         self::$Conn->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+    }
+
+    // PDO methods
+    private function preparing(){
+        $this->Query = self::$Conn->prepare($this->StringQuery);
+        $this->executing();
+    }
+    private function executing(){
+        try{
+            $this->Query->execute();
+        }catch(PDOException $e){
+            var_dump($e);
+        }
     }
 
     // Executor
@@ -36,7 +49,7 @@ class WPDatabase {
                 $this->StringQuery = "SELECT {$this->Options} FROM {$this->Table} {$this->Where} {$this->Limit} {$this->OrderBy}";
                 break;
 
-            case 'insert':
+            case 'create':
                 // INSERT INTO table (column1, column2) VALUES (value1, value2)
                 $this->StringQuery = "INSERT INTO {$this->Table} {$this->Insert}";
                 break;
@@ -56,13 +69,15 @@ class WPDatabase {
 
     // OPERATIONS
     public function select($table, $options = '*'){
+        $this->reset();
         $this->Operation = 'select';
         $this->Table = $table;
         $this->Options = $options;
         return $this;
     }
-    public function insert($table, array $dados){
-        $this->Operation = 'insert';
+    public function create($table, array $dados){
+        $this->reset();
+        $this->Operation = 'create';
         foreach($dados as $key => $value){
             $new_data[$key] = "'{$value}'";
         }
@@ -73,6 +88,7 @@ class WPDatabase {
         return $this;
     }
     public function update($table, array $dados){
+        $this->reset();
         $this->Operation = 'update';
         foreach($dados as $key => $value){
             $set[] = "{$key}='{$value}'";
@@ -83,6 +99,7 @@ class WPDatabase {
         return $this;
     }
     public function delete($table){
+        $this->reset();
         $this->Operation = 'delete';
         $this->Table = $table;
         return $this;
@@ -253,37 +270,25 @@ class WPDatabase {
         return $this;
     }
 
-    // PDO methods
-    private function preparing(){
-        $this->Query = self::$Conn->prepare($this->StringQuery);
-        $this->executing();
-    }
-    private function executing(){
-        $this->Query->execute();
-    }
 
     // Result Methods
     public function all(){
         $this->buildQuery();
-        $this->reset();
         return $this->Query->fetchAll();
     }
 
     public function single(){
         $this->buildQuery();
-        $this->reset();
         return $this->Query->fetch();
     }
 
     public function confirm(){
         $this->buildQuery();
-        $this->reset();
         return $this->Query->rowCount();
     }
 
     public function lastInsertId(){
         $this->buildQuery();
-        $this->reset();
         return self::$Conn->lastInsertId();
     }
 
@@ -298,6 +303,7 @@ class WPDatabase {
 
     // Debbug methods
     public function returnWhere(){
-        echo $this->Where;
+        echo $this->StringQuery."\n";
+        echo $this->Where."\n";
     }
 }

@@ -1,11 +1,15 @@
 <?php 
 namespace core;
 
+// To use a native the simple native ORM 'WPDatabase'
+use core\WPDatabase;
+
 
 class mvc extends init
 {
 
 	protected static $Request;
+	protected $Database;
 
 	protected $Request_Method;
     protected $Url_Current;
@@ -15,6 +19,10 @@ class mvc extends init
 
     protected $Requested_Url = null;
     protected $Route_Compatible = null;
+
+	function __construct(){
+		$this->Database = new WPDatabase;
+	}
 
     public function run(){
         $this->Url_Current = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);// Pegando URL NO BROWSER
@@ -132,8 +140,6 @@ class mvc extends init
     private function url_found($route){
 		$this->exec($route['controller'], $route['action'], $this->Url_Vars, $route['verb']);
     }
-
-
 
 
 	private function exec($ctrl, $action, $vars, $verb){

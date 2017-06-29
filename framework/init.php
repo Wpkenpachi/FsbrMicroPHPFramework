@@ -89,6 +89,10 @@ class init
 			'action' => $this->Action,
 			'data' => $this->Data
 			];
+			$data = json_encode($this->Routes);
+			$routes = fopen(__DIR__.'/../Generator/types/route.json', "w");
+			fwrite($routes, $data);
+			fclose($routes);
 
 	}
 

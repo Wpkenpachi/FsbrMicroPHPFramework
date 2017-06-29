@@ -1,0 +1,6 @@
+#!/usr/bin/php -q
+<?php
+include __DIR__ . '/vendor/autoload.php';
+include __DIR__ . '/Generator/Generator.php';
+$new = new FSBRGenerator("commands.json", "path_map.json");
+$new->Args($argv);
