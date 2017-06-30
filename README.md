@@ -43,7 +43,8 @@ $app->get('profile/{id}', function(){
 
 ### Rota completa
 Essa rota aqui, diferentemente da outra acima, especifica um 
-controller(Class) e uma action (Function) pra lidar com os dados.
+controller(Class) e uma action (Function) pra lidar com os dados,
+exibílos de lá mesmo ou chamar 
 
 ```php
 $app->get('profile/{id}', 'MeuController@minha_Action');
@@ -245,3 +246,4 @@ class MeuController extends Controller{
 
 ## Generator 
 Você certamente deve estar se perguntando se vai ter que criar todas essas estruturas apresentadas na documentação, na mão... Pois então, isso não vai ser necessário. O Mvc dispõe de um programa em linha de comando para criação de estruturas como Controllers, Dbmaps e Models (Caso esteja utilizando o ELoquent ou algum outro ORM), e até view (Com a possibilidade de você criar um modelo/template pra elas). Segue a documentação do [Generator](Generator.md).
+
