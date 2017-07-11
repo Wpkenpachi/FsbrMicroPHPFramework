@@ -217,7 +217,7 @@ Aceita os parametros
 
 > $target_field ( campo da chave estrangeira )
 
-    $table->foreign('fk_name', 'nomeDoCampo', 'nomeDaTabelaAlvo', 2)->onDelete('cascade')->onUpdate('cascade');
+    $table->foreign('fk_name', 'nomeDoCampo', 'nomeDaTabelaAlvo', 'nomeDoCampoAlvo')->onDelete('cascade')->onUpdate('cascade');
 
 ## Helper
 

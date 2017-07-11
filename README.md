@@ -33,7 +33,7 @@ A primeira e mais utilizada a fim de fazer testes, e aprender como se da a utili
 ### Rota com Controller imbutido
 Aqui você informa a url da rota, e já cria o que seria o seu controller. Já podendo obter uma saída no browser, tanto utilizando o return, quanto um `echo()`,`print_r()`,`var_dump()`.
 ``` php
-// arquivo> routes.php
+//  arquivo> routes.php
 $app->get('profile/{id}', function(){
     // echo 'Hello World';
     return 'Olá Mundo!';
@@ -78,8 +78,6 @@ use core\Controller;// Declarando o Controller principal, pra poder extender
 }
 ```
 ### Obtendo dados enviados via url e via body.
-**ps:** Aqui temos o arquivo _routes.php_ onde você pode criar as suas rotas. Ou você pode
-também cria-las em outro lugar, e dar um include nele em _routes.php_.
 
 **ps2:** Lembrando que ele tem que estar entre a instância do `core\mvc`, e a chamada do método 
 `run()`.
@@ -87,8 +85,6 @@ também cria-las em outro lugar, e dar um include nele em _routes.php_.
 Logo abaixo, temos algumas rotas criadas, pro exemplo:
 ```php
 <?php //arquivo> routes.php
-{..}
-$app = new core\mvc;
 // -1 rota, queremos pegar esse dado enviado via url {id}
 $app->get('produto/{id}', 'MeuController@mostra');
 // -2 rota, queremos adicionar um novo produto, e vamos pegar os dados
