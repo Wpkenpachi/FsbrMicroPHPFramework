@@ -30,7 +30,7 @@ As rotas podem ser de 5 tipos. Especificamente separadas pelo tipo de requisiç�
 Existem duas formas de se construir uma rota.
 A primeira e mais utilizada a fim de fazer testes, e aprender como se da a utilização da framework é:
 
-### Rota com Controller imbutido
+### Rota com Controller embutido
 Aqui você informa a url da rota, e já cria o que seria o seu controller. Já podendo obter uma saída no browser, tanto utilizando o return, quanto um `echo()`,`print_r()`,`var_dump()`.
 ``` php
 //  arquivo> routes.php
